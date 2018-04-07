@@ -33,3 +33,5 @@ sysinfo.txt
 *.apk
 *.unitypackage
 Easy Grip VR/Library/
+Easy Grip VR/ProjectSettings/
+Easy Grip VR/Assets/SteamVR
