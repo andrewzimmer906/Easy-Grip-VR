@@ -76,7 +76,7 @@ public class SVControllerInput : MonoBehaviour {
 		}
 		clipHard = new OVRHapticsClip(clipHard.Samples, clipHard.Samples.Length);
 		#else
-		Debug.LogError("Easy Grip VR requires you to choose either Steam VR or Oculus SDK as your VR platform. Please open \"Window -> Revolver VR SDK\" and select your framework.");
+		Debug.LogError("Easy Grip VR requires you to choose either Steam VR or Oculus SDK as your VR platform. Please open \"Window -> Easy Grip VR SDK\" and select your framework.");
 		#endif
 	}
 
@@ -178,10 +178,41 @@ public class SVControllerInput : MonoBehaviour {
 		}
 	}
 
-	//------------------------
-	// Controller Info
-	//------------------------
-	public Vector3 PositionForController(SVControllerType controller) {
+    public Vector3 LeftControllerVelocity {
+        get {
+        #if USES_STEAM_VR
+            if (this.LeftControllerIsConnected) {
+                return Controller(SVControllerType.SVController_Left).velocity;
+            }
+            return Vector3.zero;
+        #elif USES_OPEN_VR
+			return OVRInput.GetLocalControllerVelocity(OVRInput.Controller.LTouch);
+        #else
+			return Vector3.zero;
+        #endif
+        }
+    }
+
+    public Vector3 RightControllerVelocity {
+        get {
+        #if USES_STEAM_VR
+            if (this.LeftControllerIsConnected) {
+                return Controller(SVControllerType.SVController_Right).velocity;
+            }
+            return Vector3.zero;
+#elif USES_OPEN_VR
+			return OVRInput.GetLocalControllerVelocity(OVRInput.Controller.RTouch);
+#else
+			return Vector3.zero;
+#endif
+        }
+    }
+
+
+    //------------------------
+    // Controller Info
+    //------------------------
+    public Vector3 PositionForController(SVControllerType controller) {
 		if (controller == SVControllerType.SVController_Left) {
 			return LeftControllerPosition;
 		} else if (controller == SVControllerType.SVController_Right) {
@@ -235,26 +266,26 @@ public class SVControllerInput : MonoBehaviour {
 		if (button == SVInputButton.SVButton_None || !ControllerIsConnected(controller))
 			return false;
 		
-		#if USES_STEAM_VR
+#if USES_STEAM_VR
 		return Controller(controller).GetPress(GetSteamButtonMapping(button));
-		#elif USES_OPEN_VR
+#elif USES_OPEN_VR
 		return GetOVRButtonDown(controller, button);
-		#else
+#else
 		return false;
-		#endif
+#endif
 	}
 
 	public bool GetButtonPressDown(SVControllerType controller, SVInputButton button) {
 		if (button == SVInputButton.SVButton_None || !ControllerIsConnected(controller))
 			return false;
 		
-		#if USES_STEAM_VR
+#if USES_STEAM_VR
 		return Controller(controller).GetPressDown(GetSteamButtonMapping(button));
-		#elif USES_OPEN_VR
+#elif USES_OPEN_VR
 		return GetOVRButtonPressDown(controller, button);
-		#else
+#else
 		return false;
-		#endif
+#endif
 	}
 
 	public bool SetActiveController(SVControllerType activeController) {
@@ -270,10 +301,10 @@ public class SVControllerInput : MonoBehaviour {
 
 		this.activeController = activeController;
 
-		#if USES_STEAM_VR
+#if USES_STEAM_VR
 		this.activeControllerDevice = Controller (activeController);
 		this.activeRenderModel = SteamController(this.activeController).GetComponentInChildren<SteamVR_RenderModel>();
-		#endif
+#endif
 
 		if (this.activeController == SVControllerType.SVController_Right) {
 			SVControllerManager.rightControllerActive = true;
@@ -285,10 +316,10 @@ public class SVControllerInput : MonoBehaviour {
 	}
 
 	public void ClearActiveController() {
-		#if USES_STEAM_VR
+#if USES_STEAM_VR
 		this.activeControllerDevice = null;
 		this.activeRenderModel = null;
-		#endif
+#endif
 
 		if (this.activeController == SVControllerType.SVController_Right) {
 			SVControllerManager.rightControllerActive = false;
@@ -300,64 +331,64 @@ public class SVControllerInput : MonoBehaviour {
 	}
 
 	public void RumbleActiveController(float rumbleLength) {
-		#if USES_STEAM_VR
+#if USES_STEAM_VR
 		if (activeControllerDevice != null) {
 			StartCoroutine( LongVibration(activeControllerDevice, rumbleLength, 1.0f) );
 		}
-		#elif USES_OPEN_VR
+#elif USES_OPEN_VR
 		StartCoroutine( OVRVibrateForTime(rumbleLength) );
-		#endif
+#endif
 	}
 
 	public Vector3 ActiveControllerVelocity() {
-		#if USES_STEAM_VR
+#if USES_STEAM_VR
 		return this.activeControllerDevice.velocity;
-		#elif USES_OPEN_VR
+#elif USES_OPEN_VR
 		if (activeController == SVControllerType.SVController_Left) {
 			return OVRInput.GetLocalControllerVelocity(OVRInput.Controller.LTouch);
 		} else if (activeController == SVControllerType.SVController_Right) {
 			return OVRInput.GetLocalControllerVelocity(OVRInput.Controller.RTouch);
 		}
 		return Vector3.zero;
-		#else
+#else
 		return Vector3.zero;
-		#endif
+#endif
 	}
 
 	public Vector3 ActiveControllerAngularVelocity() {
-		#if USES_STEAM_VR
+#if USES_STEAM_VR
 		return this.activeControllerDevice.angularVelocity;
-		#elif USES_OPEN_VR
+#elif USES_OPEN_VR
 		if (activeController == SVControllerType.SVController_Left) {
 			return OVRInput.GetLocalControllerAngularVelocity(OVRInput.Controller.LTouch);
 		} else if (activeController == SVControllerType.SVController_Right) {
 			return OVRInput.GetLocalControllerAngularVelocity(OVRInput.Controller.RTouch);
 		}
 		return Vector3.zero;
-		#else
+#else
 		return Vector3.zero;
-		#endif
+#endif
 	}
 
 	//------------------------
 	// Visibility
 	//------------------------
 	public void HideActiveModel() {
-		#if USES_STEAM_VR
+#if USES_STEAM_VR
 		this.activeRenderModel.gameObject.SetActive (false);
-		#endif
+#endif
 	}
 
 	public void ShowActiveModel() {
-		#if USES_STEAM_VR
+#if USES_STEAM_VR
 		this.activeRenderModel.gameObject.SetActive (true);
-		#endif
+#endif
 	}
 
 	//------------------------
 	// Haptics
 	//------------------------
-	#if USES_STEAM_VR
+#if USES_STEAM_VR
 	//length is how long the vibration should go for
 	//strength is vibration strength from 0-1
 	private IEnumerator LongVibration(SteamVR_Controller.Device device, float totalLength, float strength) {
@@ -379,9 +410,9 @@ public class SVControllerInput : MonoBehaviour {
 			yield return StartCoroutine(LongVibration(device, vibrationLength, strength));
 		}
 	}
-	#endif
+#endif
 
-	#if USES_OPEN_VR
+#if USES_OPEN_VR
 	public IEnumerator OVRVibrateForTime(float time)
 	{
 		OVRHaptics.OVRHapticsChannel channel;
@@ -399,13 +430,13 @@ public class SVControllerInput : MonoBehaviour {
 		channel.Clear();
 		yield return null;
 	}
-	#endif
+#endif
 
 
 	//------------------------
 	// Steam Mappings
 	//------------------------
-	#if USES_STEAM_VR
+#if USES_STEAM_VR
 
 	private Valve.VR.EVRButtonId GetSteamButtonMapping(SVInputButton button) {
 		switch (button) {
@@ -434,13 +465,13 @@ public class SVControllerInput : MonoBehaviour {
 		}
 		return (Valve.VR.EVRButtonId)0;
 	}
-	#endif
+#endif
 
 
 	//------------------------
 	// OVR Mappings
 	//------------------------
-	#if USES_OPEN_VR
+#if USES_OPEN_VR
 
 	private OVRInput.Button GetOVRButtonMapping(SVInputButton button) {
 		switch (button) {
@@ -521,5 +552,5 @@ public class SVControllerInput : MonoBehaviour {
 			
 	}
 
-	#endif
+#endif
 }

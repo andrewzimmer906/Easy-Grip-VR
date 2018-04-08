@@ -35,7 +35,7 @@
         Pass
         {
             Blend SrcAlpha OneMinusSrcAlpha
-            ZWrite Off // On (default) = Ignore lights etc. Should this be a property?
+            ZWrite Off
             Stencil
             {
                 Ref 0

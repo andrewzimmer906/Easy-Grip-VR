@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-public class SVOutline : MonoBehaviour {
-
-	[HideInInspector]
-    public float outlineActive = 0; // value between 0 and 1
-
+/**
+ * This is used to draw an outline around the object you are picking up.  Alternativly use SVGlow to just adjust the emission variable instead. :)
+ */
+public class SVOutlineIndicator : SVAbstractGripIndicator {
     [Tooltip("The thickness of the outline effect")]
     public float outlineThickness = 1f;
     public Color outlineColor;
@@ -19,25 +18,23 @@ public class SVOutline : MonoBehaviour {
     private GameObject outlineModel;
     private Material outlineModelMaterial;
 
-    private float lastIsActive = 100;
-
 	// Use this for initialization
 	void Start () {
         this.outlineModelMaterial = (Material)Resources.Load(materialPath, typeof(Material));
-        Assert.IsNotNull(this.outlineModelMaterial, "SVOutline was unable to load the SVOutlineMaterial. No biggie, this probably means you need to reset your folder structure. You'll need to have a structure like this Resources/Easy Grip VR/SVOutlineMaterial.");
+        Assert.IsNotNull(this.outlineModelMaterial, "SVOutlineIndicator was unable to load the SVOutlineMaterial. No biggie, this probably means you need to reset your folder structure. You'll need to have a structure like this Resources/Easy Grip VR/SVOutlineMaterial.");
 
         this.RefreshHighlightMesh();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        if (this.lastIsActive != this.outlineActive) {
-            outlineModelMaterial.SetFloat("_Alpha", this.outlineActive);
+        if (this.lastIsActive != this.indicatorActive) {
+            outlineModelMaterial.SetFloat("_Alpha", this.indicatorActive);
             outlineModelMaterial.SetFloat("_Thickness", this.outlineThickness);
             outlineModelMaterial.SetColor("_OutlineColor", (Color)this.outlineColor);
-            this.lastIsActive = this.outlineActive;
+            this.lastIsActive = this.indicatorActive;
 
-            if (this.outlineActive > 0) {
+            if (this.indicatorActive > 0) {
                 this.outlineModel.SetActive(true);
             } else {
                 this.outlineModel.SetActive(false);
