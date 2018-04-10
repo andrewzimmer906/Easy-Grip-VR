@@ -250,7 +250,7 @@ public class SVGrabbable : MonoBehaviour {
             // If we're moving too quickly and allow physics, drop the object. This also gives us the ability to drop it if you are trying to move it through
             // a solid object.
             if (!this.ignorePhysicsInHand &&
-                (transform.position - this.input.PositionForController(this.input.activeController)).magnitude >= objectDropDistance) {
+                (transform.position - targetPosition).magnitude >= objectDropDistance) {
                 grabData.recentlyDropped = true;
                 this.ClearActiveController();
                 return;
@@ -259,12 +259,12 @@ public class SVGrabbable : MonoBehaviour {
             // If we've got a joint let's forget about setting the rotation and just focus on the position.
             // This keeps us from losing our minds!
             if (this.grabData.hasJoint) {
-                transform.position = this.input.PositionForController(this.input.activeController) + targetOffset;
+                transform.position = targetPosition + targetOffset;
             } else {  // otherwise just lock to the hand position so there is no delay
                 if (this.ignorePhysicsInHand) {
-                    this.transform.SetPositionAndRotation(this.input.PositionForController(this.input.activeController) + targetOffset, targetRotation);
+                    this.transform.SetPositionAndRotation(targetPosition + targetOffset, targetRotation);
                 } else {
-                    transform.position = Vector3.Lerp(this.transform.position, this.input.PositionForController(this.input.activeController) + targetOffset, inHandLerpSpeed);
+                    transform.position = Vector3.Lerp(this.transform.position, targetPosition + targetOffset, inHandLerpSpeed);
                     transform.rotation = Quaternion.Lerp(this.transform.rotation, targetRotation, inHandLerpSpeed);
                     rb.velocity = this.input.ActiveControllerVelocity();
                     rb.angularVelocity = this.input.ActiveControllerAngularVelocity();

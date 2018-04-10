@@ -13,7 +13,7 @@ public class SVOutlineIndicator : SVAbstractGripIndicator {
 
     // NAVI: HEY, OVER HERE!
     // If you rearrange the folders you might need to update this path!
-    private string materialPath = "Easy Grab VR/SVOutlineMaterial";
+    private string materialPath = "SVOutlineMaterial";
 
     private GameObject outlineModel;
     private Material outlineModelMaterial;
@@ -21,7 +21,7 @@ public class SVOutlineIndicator : SVAbstractGripIndicator {
 	// Use this for initialization
 	void Start () {
         this.outlineModelMaterial = new Material((Material)Resources.Load(materialPath, typeof(Material)));
-        Assert.IsNotNull(this.outlineModelMaterial, "SVOutlineIndicator was unable to load the SVOutlineMaterial. No biggie, this probably means you need to reset your folder structure. You'll need to have a structure like this Resources/Easy Grab VR/SVOutlineMaterial.");
+        Assert.IsNotNull(this.outlineModelMaterial, "SVOutlineIndicator was unable to load the SVOutlineMaterial. No biggie, this probably means you need to reset your folder structure. You'll need to have a structure like this Easy Grab VR/Resources/SVOutlineMaterial.");
 
         this.RefreshHighlightMesh();
 	}
