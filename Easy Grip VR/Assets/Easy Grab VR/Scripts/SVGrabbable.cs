@@ -19,27 +19,40 @@ public class SVGrabbable : MonoBehaviour {
     //------------------------
     [Space(15)]
     [Header("Pickup Settings")]
+    [Tooltip("Defines if its it possible to pick this object up")]
     public bool canGrab = true;
+    [Tooltip("If true, this object can fly to your hand.")]
     public bool shouldFly = true;
-    public float grabDistance = .35f;
-	public float grabFlyTime = .1f;
+    [Tooltip("How far the object can fly to your hand.")]
+    public float grabFlyDistance = .35f;
+    [Tooltip("How long it takes the object to complete its flight.")]
+    public float grabFlyTime = .1f;
 
     [Space(15)]
     [Header("Hold Settings")]
+
+    [Tooltip("Where on the object should you grip it? Offsets are useful for tools like hammers and other things.")]
     public Vector3 positionOffsetInHand = new Vector3(0, 0, 0);
 
+    [Tooltip("If true this forces the object to a specific local rotation when you pick it up.")]
     public bool forceRotationInHand = false;
+    [Tooltip("The rotation forced in hand. Only applies if forceRotationInHand is true.")]
     public Vector3 rotationInHand = new Vector3(0, 0, 0);
 
+    [Tooltip("If true a held object won't collide with anything and doesn't use inHandLerpSpeed, rather it sets its position directly.")]
+    public bool ignorePhysicsInHand = true;
+    [Tooltip("How quickly the object will match your hands position when moving. Higher values give you less lag but less realistic physics when interacting with immobile objects.")]
     [Range(0.0f,1.0f)]
     public float inHandLerpSpeed = 0.4f;
 
+    [Tooltip("How far from your hand the object needs to be before we drop it automatically. Useful for collisions.")]
+    public float objectDropDistance = 0.3f;
+
     [Space(15)]
     [Header("Collision Settings")]
-    public bool ignorePhysicsInHand = true;
-    public float objectDropDistance = 0.19f;
 
-    public  bool isKnockable = true;
+    [Tooltip("If you can knock the object around with your controller.")]
+    public bool isKnockable = true;
     private bool lastKnockableValue = true;
 
     [HideInInspector]
@@ -156,12 +169,12 @@ public class SVGrabbable : MonoBehaviour {
 		}
 
         // Within grabbing distance?
-        if (grabDistance > distanceToLeftHand ||
-            grabDistance > distanceToRightHand) {
+        if (grabFlyDistance > distanceToLeftHand ||
+            grabFlyDistance > distanceToRightHand) {
             float distance = Mathf.Min(distanceToLeftHand, distanceToRightHand);
             if (this.gripIndicatorComponent) {
-                float distanceForHighlight = grabDistance / 4f;
-                float highlight = Mathf.Max(0, Mathf.Min(1, (grabDistance - distance) / distanceForHighlight));
+                float distanceForHighlight = grabFlyDistance / 4f;
+                float highlight = Mathf.Max(0, Mathf.Min(1, (grabFlyDistance - distance) / distanceForHighlight));
                 gripIndicatorComponent.indicatorActive = highlight;
             }
 

@@ -23,4 +23,12 @@ public class SVUtilities {
 
         return componets;
     }
+
+    public static AudioSource SetOrAddAudioSource(GameObject parent) {
+        if (!parent.GetComponent<AudioSource>()) {
+            return parent.AddComponent<AudioSource>();
+        } else {
+            return parent.GetComponent<AudioSource>();
+        }
+    }
 }
