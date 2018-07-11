@@ -128,43 +128,58 @@ public class SVControllerInput : MonoBehaviour {
 
 	public Vector3 LeftControllerPosition {
 		get {
-			#if USES_STEAM_VR
+#if USES_STEAM_VR
 			if (this.LeftControllerIsConnected) {
 				return controllerManager.left.transform.position;
 			}
 			return Vector3.zero;
-			#elif USES_OPEN_VR
-			return OVRInput.GetLocalControllerPosition(OVRInput.Controller.LTouch);
-			#else
+#elif USES_OPEN_VR
+            Vector3 leftHandPosition = OVRInput.GetLocalControllerPosition(OVRInput.Controller.LTouch);
+            Transform trackingSpace = GameObject.FindObjectOfType<OVRCameraRig>().trackingSpace;
+            if (trackingSpace != null) {
+                return trackingSpace.TransformPoint(leftHandPosition);
+            }
+            return leftHandPosition;
+#else
 			return Vector3.zero;
-			#endif
+#endif
 		}
 	}
 
 	public Vector3 RightControllerPosition {
 		get {
-			#if USES_STEAM_VR
+#if USES_STEAM_VR
 			if (this.RightControllerIsConnected) {
 				return controllerManager.right.transform.position;
 			}
 			return Vector3.zero;	
-			#elif USES_OPEN_VR
-			return OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch);
-			#else
+#elif USES_OPEN_VR
+            Vector3 rightHandPosition = OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch);
+            Transform trackingSpace = GameObject.FindObjectOfType<OVRCameraRig>().trackingSpace;
+            if (trackingSpace != null) {
+               return trackingSpace.TransformPoint(rightHandPosition);
+            }
+            return rightHandPosition;
+#else
 			return Vector3.zero;
-			#endif
+#endif
 		}
 	}
 
 	public Quaternion LeftControllerRotation {
 		get {
 			if (this.LeftControllerIsConnected) {
-				#if USES_STEAM_VR
+#if USES_STEAM_VR
 				return controllerManager.left.transform.rotation;
-				#elif USES_OPEN_VR
-				return OVRInput.GetLocalControllerRotation(OVRInput.Controller.LTouch);
-				#endif
-			}
+#elif USES_OPEN_VR
+				Quaternion leftHandRotation = OVRInput.GetLocalControllerRotation(OVRInput.Controller.LTouch);
+                Transform trackingSpace = GameObject.FindObjectOfType<OVRCameraRig>().trackingSpace;
+                if (trackingSpace != null) {
+                    return trackingSpace.rotation * leftHandRotation;
+                }
+                return leftHandRotation;
+#endif
+            }
 
 			return Quaternion.identity;
 		}
@@ -173,11 +188,16 @@ public class SVControllerInput : MonoBehaviour {
 	public Quaternion RightControllerRotation {
 		get {
 			if (this.RightControllerIsConnected) {
-				#if USES_STEAM_VR
+#if USES_STEAM_VR
 				return controllerManager.right.transform.rotation;
-				#elif USES_OPEN_VR
-				return OVRInput.GetLocalControllerRotation(OVRInput.Controller.RTouch);
-				#endif
+#elif USES_OPEN_VR
+                Quaternion rightHandRotation = OVRInput.GetLocalControllerRotation(OVRInput.Controller.RTouch);
+                Transform trackingSpace = GameObject.FindObjectOfType<OVRCameraRig>().trackingSpace;
+                if (trackingSpace != null) {
+                    return trackingSpace.rotation * rightHandRotation;
+                }
+                return rightHandRotation;
+#endif
 			}
 
 			return Quaternion.identity;
