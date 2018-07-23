@@ -206,34 +206,83 @@ public class SVControllerInput : MonoBehaviour {
 
     public Vector3 LeftControllerVelocity {
         get {
-        #if USES_STEAM_VR
+#if USES_STEAM_VR
             if (this.LeftControllerIsConnected) {
                 return Controller(SVControllerType.SVController_Left).velocity;
             }
             return Vector3.zero;
-        #elif USES_OPEN_VR
-			return OVRInput.GetLocalControllerVelocity(OVRInput.Controller.LTouch);
-        #else
-			return Vector3.zero;
-        #endif
-        }
-    }
-
-    public Vector3 RightControllerVelocity {
-        get {
-        #if USES_STEAM_VR
-            if (this.LeftControllerIsConnected) {
-                return Controller(SVControllerType.SVController_Right).velocity;
-            }
-            return Vector3.zero;
 #elif USES_OPEN_VR
-			return OVRInput.GetLocalControllerVelocity(OVRInput.Controller.RTouch);
+            Vector3 leftHandVelocity = OVRInput.GetLocalControllerVelocity(OVRInput.Controller.LTouch);
+            Transform trackingSpace = GameObject.FindObjectOfType<OVRCameraRig>().trackingSpace;
+            if (trackingSpace != null) {
+                return trackingSpace.TransformDirection(leftHandVelocity);
+            }
+            return leftHandVelocity;
 #else
 			return Vector3.zero;
 #endif
         }
     }
 
+    public Vector3 RightControllerVelocity {
+        get {
+#if USES_STEAM_VR
+            if (this.LeftControllerIsConnected) {
+                return Controller(SVControllerType.SVController_Right).velocity;
+            }
+            return Vector3.zero;
+#elif USES_OPEN_VR
+            Vector3 rightHandVelocity = OVRInput.GetLocalControllerVelocity(OVRInput.Controller.RTouch);
+            Transform trackingSpace = GameObject.FindObjectOfType<OVRCameraRig>().trackingSpace;
+            if (trackingSpace != null) {
+                return trackingSpace.TransformDirection(rightHandVelocity);
+            }
+            return rightHandVelocity;
+#else
+			return Vector3.zero;
+#endif
+        }
+    }
+
+    public Vector3 LeftControllerAngularVelocity {
+        get {
+#if USES_STEAM_VR
+            if (this.LeftControllerIsConnected) {
+                return Controller(SVControllerType.SVController_Left).angularVelocity;
+            }
+            return Vector3.zero;
+#elif USES_OPEN_VR
+            Vector3 leftHandAngularVelocity = OVRInput.GetLocalControllerAngularVelocity(OVRInput.Controller.LTouch);
+            Transform trackingSpace = GameObject.FindObjectOfType<OVRCameraRig>().trackingSpace;
+            if (trackingSpace != null) {
+                return trackingSpace.TransformDirection(leftHandAngularVelocity);
+            }
+            return leftHandAngularVelocity;
+#else
+		return Vector3.zero;
+#endif
+        }
+    }
+
+    public Vector3 RightControllerAngularVelocity {
+        get {
+#if USES_STEAM_VR
+            if (this.RightControllerIsConnected) {
+                return Controller(SVControllerType.SVController_Right).angularVelocity;
+            }
+            return Vector3.zero;
+#elif USES_OPEN_VR
+            Vector3 rightHandAngularVelocity = OVRInput.GetLocalControllerAngularVelocity(OVRInput.Controller.RTouch);
+            Transform trackingSpace = GameObject.FindObjectOfType<OVRCameraRig>().trackingSpace;
+            if (trackingSpace != null) {
+                return trackingSpace.TransformDirection(rightHandAngularVelocity);
+            }
+            return rightHandAngularVelocity;
+#else
+		return Vector3.zero;
+#endif
+        }
+    }
 
     //------------------------
     // Controller Info
@@ -367,38 +416,29 @@ public class SVControllerInput : MonoBehaviour {
 	}
 
 	public Vector3 ActiveControllerVelocity() {
-#if USES_STEAM_VR
-		return this.activeControllerDevice.velocity;
-#elif USES_OPEN_VR
-		if (activeController == SVControllerType.SVController_Left) {
-			return OVRInput.GetLocalControllerVelocity(OVRInput.Controller.LTouch);
-		} else if (activeController == SVControllerType.SVController_Right) {
-			return OVRInput.GetLocalControllerVelocity(OVRInput.Controller.RTouch);
-		}
-		return Vector3.zero;
-#else
-		return Vector3.zero;
-#endif
+        if (activeController == SVControllerType.SVController_Left) {
+            return LeftControllerVelocity;
+        } else if (activeController == SVControllerType.SVController_Right) {
+            return RightControllerVelocity;
+        } else {
+            return Vector3.zero;
+        }
 	}
 
 	public Vector3 ActiveControllerAngularVelocity() {
-#if USES_STEAM_VR
-		return this.activeControllerDevice.angularVelocity;
-#elif USES_OPEN_VR
-		if (activeController == SVControllerType.SVController_Left) {
-			return OVRInput.GetLocalControllerAngularVelocity(OVRInput.Controller.LTouch);
-		} else if (activeController == SVControllerType.SVController_Right) {
-			return OVRInput.GetLocalControllerAngularVelocity(OVRInput.Controller.RTouch);
-		}
-		return Vector3.zero;
-#else
-		return Vector3.zero;
-#endif
-	}
+        if (activeController == SVControllerType.SVController_Left) {
+            return LeftControllerAngularVelocity;
+        } else if (activeController == SVControllerType.SVController_Right) {
+            return RightControllerAngularVelocity;
+        } else {
+            return Vector3.zero;
+        }
+    }
 
 	//------------------------
 	// Visibility
 	//------------------------
+
 	public void HideActiveModel() {
 #if USES_STEAM_VR
 		this.activeRenderModel.gameObject.SetActive (false);
@@ -414,6 +454,7 @@ public class SVControllerInput : MonoBehaviour {
 	//------------------------
 	// Haptics
 	//------------------------
+
 #if USES_STEAM_VR
 	//length is how long the vibration should go for
 	//strength is vibration strength from 0-1
