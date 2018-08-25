@@ -31,6 +31,8 @@ public class SVGrabbable : MonoBehaviour {
     [Space(15)]
     [Header("Hold Settings")]
 
+    [Tooltip("This allows you to mirror the offset on the Local X Axis if the object is held in your left hand. You usually want this on.")]
+    public bool mirrorXOffsetInLeftHand = true;
     [Tooltip("Where on the object should you grip it? Offsets are useful for tools like hammers and other things.")]
     public Vector3 positionOffsetInHand = new Vector3(0, 0, 0);
 
@@ -250,6 +252,9 @@ public class SVGrabbable : MonoBehaviour {
 
         // Make sure position offset respects rotation
         Vector3 targetOffset = targetRotation * -positionOffsetInHand;
+        if (this.input.activeController == SVControllerType.SVController_Left && mirrorXOffsetInLeftHand) {
+            targetOffset = targetRotation * -(new Vector3(-positionOffsetInHand.x, positionOffsetInHand.y, positionOffsetInHand.z));
+        }
 
         float percComplete = (Time.time - this.grabData.grabStartTime) / this.grabFlyTime;
         if (percComplete < 1 && this.shouldFly && !this.grabData.hasJoint) {
