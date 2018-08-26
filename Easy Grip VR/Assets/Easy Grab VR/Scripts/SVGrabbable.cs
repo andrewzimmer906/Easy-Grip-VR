@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-
-
 [RequireComponent(typeof(SVControllerInput))]
 [RequireComponent(typeof(Rigidbody))]
 public class SVGrabbable : MonoBehaviour {
