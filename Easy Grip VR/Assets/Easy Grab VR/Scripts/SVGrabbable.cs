@@ -110,6 +110,16 @@ public class SVGrabbable : MonoBehaviour {
     }
 
     //------------------------
+    // Public
+    //------------------------
+
+    public void DropFromHand() {
+        if (this.inHand) {
+            this.ClearActiveController();
+        }
+    }
+
+    //------------------------
     // Update
     //------------------------
     /* Why Fixed Update? Good Question kind sir / madam. It's so we can run BEFORE our physics calculations.  This enables us to force position to hand position while
