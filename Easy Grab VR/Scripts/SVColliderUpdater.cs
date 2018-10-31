@@ -9,11 +9,21 @@ public class SVColliderUpdater : MonoBehaviour {
     private SphereCollider controllerCollider;
     private Rigidbody rb;
 
+
     // Real talk, is this really the best way to define a constant in c#?
+#if USES_STEAM_VR
     const float kKnockableColliderSize = 0.06f;
     const float kHandMass = 1.0f;
     Vector3 kKnockableColliderPosition = new Vector3(.00f, -.03f, -.085f);
-
+#elif USES_OPEN_VR
+    const float kKnockableColliderSize = 0.06f;
+    const float kHandMass = 1.0f;
+    Vector3 kKnockableColliderPosition = new Vector3(.00f, -.03f, 0f);
+#else
+    const float kKnockableColliderSize = 0.06f;
+    const float kHandMass = 1.0f;
+    Vector3 kKnockableColliderPosition = new Vector3(.00f, -.03f, -.085f);
+#endif
     // Use this for initialization
     void Awake () {
         this.input = this.GetComponent<SVControllerInput>();

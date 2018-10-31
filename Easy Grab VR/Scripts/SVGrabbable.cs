@@ -41,6 +41,10 @@ public class SVGrabbable : MonoBehaviour {
 
     [Tooltip("If true a held object won't collide with anything and doesn't use inHandLerpSpeed, rather it sets its position directly.")]
     public bool ignorePhysicsInHand = true;
+
+    [Tooltip("If true, physics will work better with collisions for objects in your hand. This is really useful for things like joints, but it will make the object fall from your hand while moving around.")]
+    public bool locomotionSupported = false;
+
     [Tooltip("How quickly the object will match your hands position when moving. Higher values give you less lag but less realistic physics when interacting with immobile objects.")]
     [Range(0.0f, 1.0f)]
     public float inHandLerpSpeed = 0.4f;
@@ -123,9 +127,24 @@ public class SVGrabbable : MonoBehaviour {
     // Update
     //------------------------
     /* Why Fixed Update? Good Question kind sir / madam. It's so we can run BEFORE our physics calculations.  This enables us to force position to hand position while
-     * still respecting the Unity physics engine. 
+     * still respecting the Unity physics engine. This is great when you hand joints connected to your objects.
+	*/
+    private void FixedUpdate() {
+        if (!locomotionSupported) {
+            DoGrabbedUpdate();
+        }
+    }
+
+    /* Why Late Update? Good Question kind sir / madam. It's so we can run AFTER our physics calculations.  This enables us to lerp objects that you need to carry around with you
+     * think sword for example.
 	*/
     void LateUpdate() {
+        if(locomotionSupported) {
+            DoGrabbedUpdate();
+        }
+    }
+
+    void DoGrabbedUpdate() {
         if (this.input.activeController == SVControllerType.SVController_None) {
             this.UngrabbedUpdate();
         } else {
