@@ -125,7 +125,7 @@ public class SVGrabbable : MonoBehaviour {
     /* Why Fixed Update? Good Question kind sir / madam. It's so we can run BEFORE our physics calculations.  This enables us to force position to hand position while
      * still respecting the Unity physics engine. 
 	*/
-    void FixedUpdate() {
+    void LateUpdate() {
         if (this.input.activeController == SVControllerType.SVController_None) {
             this.UngrabbedUpdate();
         } else {
